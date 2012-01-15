@@ -1,4 +1,6 @@
 require 'formula'
+require 'keg'
+require 'tab'
 
 def quartz?
   ARGV.include? '--quartz'
@@ -30,21 +32,27 @@ class Gtkx < Formula
 
   fails_with_llvm "Undefined symbols when linking", :build => "2326" unless MacOS.lion?
 
+  def options
+    [ ['--quartz', "Use Quartz (native) backend."] ]
+  end
+
   def install
     if quartz? and not pango_quartz?
-        onoe "To install a GTK+ with the quartz backend you need to compile pango with the --quartz option"
+        onoe "To install a GTK+ with the quartz backend you need to compile pango with the --quartz option."
         exit 1
     end
-    
+
+    if not quartz? and pango_quartz?
+        onoe "To install GTK+ with X11 backend, you need a pango compiled without the --quartz option."
+        exit 1
+    end    
+
     args = ["--disable-debug", "--disable-dependency-tracking",
             "--prefix=#{prefix}",
             "--disable-glibtest", '--disable-introspection']
    
-    args << "--with-gdktarget=quartz" << if quartz?
+    args << "--with-gdktarget=quartz" if quartz?
         
-    # cairo_pkgconfig = Formula.factory("cairo").prefix+'lib'+'pkgconfig'
-    # pango_pkgconfig = Formula.factory("pango").prefix+'lib'+'pkgconfig'
-    # ENV['PKG_CONFIG_PATH'] = [ cairo_pkgconfig, pango_pkgconfig ].join(":")
   
     system "./configure", *args
     system "make install"

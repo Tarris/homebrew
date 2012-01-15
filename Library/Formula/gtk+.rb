@@ -45,15 +45,14 @@ class Gtkx < Formula
     if not quartz? and pango_quartz?
         onoe "To install GTK+ with X11 backend, you need a pango compiled without the --quartz option."
         exit 1
-    end    
+    end
 
     args = ["--disable-debug", "--disable-dependency-tracking",
             "--prefix=#{prefix}",
             "--disable-glibtest", '--disable-introspection']
-   
+
     args << "--with-gdktarget=quartz" if quartz?
-        
-  
+
     system "./configure", *args
     system "make install"
   end

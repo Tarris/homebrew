@@ -15,7 +15,7 @@ class GtkMacIntegration < Formula
   homepage 'http://live.gnome.org/GTK+/OSX'
   sha256 '417773d32be5304839f6f917a6ce4637d9a642829105ce8f9527f663830b8089'
 
-  depends_on 'pkgconfig' => :build
+  depends_on 'pkg-config' => :build
   depends_on 'glib'
   depends_on 'gtk+'
 

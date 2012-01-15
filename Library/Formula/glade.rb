@@ -21,6 +21,8 @@ class Glade < Formula
   depends_on 'libglade'
   depends_on 'hicolor-icon-theme'
 
+  depends_on 'cairo'
+
   def patches
     # patch glade to use GtkOSXApplication
     # fix menu accelerators
@@ -33,7 +35,12 @@ class Glade < Formula
     system "sed -i '.sed' 's/IGE_MAC/GTK_MAC/g' configure"
     system "sed -i '.sed' 's/ige-mac/gtk-mac/g' configure"
 
-    system "./configure", "--disable-debug", "--disable-dependency-tracking",
+  #  if gtk_quartz?
+  #      cairo = Formula.factory('cairo').lib+"pkgconfig"
+  #      ENV['PKG_CONFIG_PATH'] += cairo
+  #  end
+    
+    system "./configure", "--enable-debug", "--disable-dependency-tracking",
                           "--prefix=#{prefix}"
     system "make install"
   end

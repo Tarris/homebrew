@@ -1,5 +1,19 @@
 require 'formula'
 
+def quartz?
+  ARGV.include? '--quartz'
+end
+
+def pango_quartz?
+  c = Formula.factory('pango')
+  if c.installed?
+    k = Keg.for(c.prefix)
+    Tab.for_keg(k).installed_with? '--quartz'
+  else
+    false
+  end
+end
+
 class Gtkx < Formula
   homepage 'http://www.gtk.org/'
   url 'http://ftp.gnome.org/pub/gnome/sources/gtk+/2.24/gtk+-2.24.8.tar.bz2'
@@ -17,9 +31,22 @@ class Gtkx < Formula
   fails_with_llvm "Undefined symbols when linking", :build => "2326" unless MacOS.lion?
 
   def install
-    system "./configure", "--disable-debug", "--disable-dependency-tracking",
-                          "--prefix=#{prefix}",
-                          "--disable-glibtest"
+    if quartz? and not pango_quartz?
+        onoe "To install a GTK+ with the quartz backend you need to compile pango with the --quartz option"
+        exit 1
+    end
+    
+    args = ["--disable-debug", "--disable-dependency-tracking",
+            "--prefix=#{prefix}",
+            "--disable-glibtest", '--disable-introspection']
+   
+    args << "--with-gdktarget=quartz" << if quartz?
+        
+    # cairo_pkgconfig = Formula.factory("cairo").prefix+'lib'+'pkgconfig'
+    # pango_pkgconfig = Formula.factory("pango").prefix+'lib'+'pkgconfig'
+    # ENV['PKG_CONFIG_PATH'] = [ cairo_pkgconfig, pango_pkgconfig ].join(":")
+  
+    system "./configure", *args
     system "make install"
   end
 

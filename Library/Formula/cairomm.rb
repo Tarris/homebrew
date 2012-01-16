@@ -15,7 +15,7 @@ end
 class Cairomm < Formula
   url 'http://cairographics.org/releases/cairomm-1.10.0.tar.gz'
   homepage 'http://cairographics.org/cairomm/'
-  #md5 '559afbc47484ba3fad265e38a3dafe90'
+  md5 '9c63fb1c04c8ecd3c5e6473075b8c39f'
 
   # patch for universal compilation from:
   # http://trac.macports.org/browser/trunk/dports/graphics/cairomm/files/patch-quartz-lp64.diff
@@ -33,11 +33,7 @@ class Cairomm < Formula
   
   def install
     system "./configure", "--disable-dependency-tracking",
-                          "--prefix=#{prefix}",
-                          "--without-x",
-                          "--without-xlib",
-                          "--disable-quartz",
-                          "--disable-quartz-font"
+                          "--prefix=#{prefix}"
     system "make install"
   end
 end

@@ -1,21 +1,36 @@
 require 'formula'
+require 'keg'
+require 'tab'
+
+def cairo_quartz?
+    c = Formula.factory('cairo')
+    if c.installed?
+        k = Keg.for(c.prefix)
+        Tab.for_keg(k).installed_with? '--quartz'
+    else
+        false
+    end
+end
 
 class Cairomm < Formula
-  url 'http://cairographics.org/releases/cairomm-1.8.4.tar.gz'
+  url 'http://cairographics.org/releases/cairomm-1.10.0.tar.gz'
   homepage 'http://cairographics.org/cairomm/'
-  md5 '559afbc47484ba3fad265e38a3dafe90'
+  #md5 '559afbc47484ba3fad265e38a3dafe90'
 
   # patch for universal compilation from:
   # http://trac.macports.org/browser/trunk/dports/graphics/cairomm/files/patch-quartz-lp64.diff
-  def patches
-    { :p0 => DATA }
-  end
+  # was needed for cairomm 1.8.4, unknown wether it is still needed
+  #def patches
+  #  { :p0 => DATA }
+  #end
 
   depends_on 'pkg-config' => :build
   depends_on 'libsigc++'
-  # cairo is available on 10.6 via X11 but not on 10.5
-  depends_on 'cairo' if MacOS.leopard?
 
+  if not (MacOS.snow_leopard? and not cairo_quartz?)
+    depends_on 'cairo'
+  end 
+  
   def install
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",

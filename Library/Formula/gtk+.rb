@@ -36,6 +36,10 @@ class Gtkx < Formula
     [ ['--quartz', "Use Quartz (native) backend."] ]
   end
 
+  def patches
+    DATA
+  end
+
   def install
     if quartz? and not pango_quartz?
         onoe "To install a GTK+ with the quartz backend you need to compile pango with the --quartz option."
@@ -61,3 +65,18 @@ class Gtkx < Formula
     system "#{bin}/gtk-demo"
   end
 end
+
+__END__
+diff --git a/tests/Makefile.in b/tests/Makefile.in
+index 7a8520a..73e1c84 100644
+--- a/tests/Makefile.in
++++ b/tests/Makefile.in
+@@ -89,7 +89,7 @@ am__autotestkeywords_SOURCES_DIST = autotestkeywords.cc
+ @HAVE_CXX_TRUE@am_autotestkeywords_OBJECTS =  \
+ @HAVE_CXX_TRUE@	autotestkeywords-autotestkeywords.$(OBJEXT)
+ autotestkeywords_OBJECTS = $(am_autotestkeywords_OBJECTS)
+-autotestkeywords_LDADD = $(LDADD)
++autotestkeywords_LDADD = $(LDADDS)
+ AM_V_lt = $(am__v_lt_$(V))
+ am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+ am__v_lt_0 = --silent

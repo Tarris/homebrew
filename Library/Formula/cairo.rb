@@ -13,10 +13,21 @@ class Cairo < Formula
 
   fails_with_llvm "Throws an 'lto could not merge' error during build.", :build => 2336
 
+  def options
+    [ ['--quartz', "Build Cairo for use with Quartz (experimental)"] ]
+  end
+
   def install
-    system "./configure", "--disable-dependency-tracking",
-                          "--prefix=#{prefix}",
-                          "--with-x"
+    args = ["--disable-dependency-tracking", "--prefix=#{prefix}"] # common arguments
+    if ARGV.include? '--quartz'
+      args << "--enable-quartz" << "--enable-quartz-font"
+      args << "--disable-xlib" << "--without-x"
+    else
+      args << "--with-x"
+    end
+
+    system "./configure", *args
     system "make install"
   end
+
 end

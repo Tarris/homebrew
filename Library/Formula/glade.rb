@@ -1,5 +1,15 @@
 require 'formula'
 
+def gtk_quartz?
+    c = Formula.factory('gtk')
+    if c.installed?
+        k = Keg.for(c.prefix)
+        Tab.for_keg(k).installed_with? '--quartz'
+    else
+        false
+    end
+end
+
 class Glade < Formula
   url 'http://ftp.gnome.org/pub/GNOME/sources/glade3/3.8/glade3-3.8.0.tar.bz2'
   homepage 'http://glade.gnome.org/'
@@ -11,8 +21,27 @@ class Glade < Formula
   depends_on 'libglade'
   depends_on 'hicolor-icon-theme'
 
+  depends_on 'cairo' if gtk_quartz?
+  depends_on 'gtk-mac-integration' if gtk_quartz?
+
+
+  def patches
+    if gtk_quartz?
+    # patch glade to use GtkOSXApplication
+    # fix menu accelerators
+        ['https://bugzilla.gnome.org/attachment.cgi?id=201040',
+         'https://bugzilla.gnome.org/attachment.cgi?id=201039']
+    else
+       ""
+    end 
+  end
+
   def install
-    system "./configure", "--disable-debug", "--disable-dependency-tracking",
+    system "find . | grep Makefile.in | xargs -t -J % sed -i '.sed' 's/IGE_MAC/GTK_MAC/g' %"
+    system "sed -i '.sed' 's/IGE_MAC/GTK_MAC/g' configure"
+    system "sed -i '.sed' 's/ige-mac/gtk-mac/g' configure"
+
+    system "./configure", "--enable-debug", "--disable-dependency-tracking",
                           "--prefix=#{prefix}"
     system "make install"
   end

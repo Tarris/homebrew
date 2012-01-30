@@ -1,23 +1,9 @@
-Homebrew
-========
-Features, usage and installation instructions are [summarized on the homepage][home].
+This branch contains my modified formulas to build gtk (and stuff dependend on gtk) with the quartz backend. No more X11 windows :)
 
-What Packages Are Available?
-----------------------------
-1. You can [browse the Formula folder on GitHub][formula].
-2. Or type `brew search` for a list.
-3. Or run `brew server` to browse packages off of a local web server.
+To compile gtk etc. with quartz support just pass --quartz to the brew command, e.g.
 
-More Documentation
-------------------
-`brew help` or `man brew` or check our [wiki][].
+brew install gtk+ --quartz
 
-Who Are You?
-------------
-I'm [Max Howell][mxcl] and I'm a splendid chap.
+The formulas are tested (to some extend) on a Snow Leopard 64bit machine and may or may not work for others. Feel free to use, modify and comment them.
 
-
-[home]:http://mxcl.github.com/homebrew
-[wiki]:http://wiki.github.com/mxcl/homebrew
-[mxcl]:http://twitter.com/mxcl
-[formula]:http://github.com/mxcl/homebrew/tree/master/Library/Formula/
+Kathrin
